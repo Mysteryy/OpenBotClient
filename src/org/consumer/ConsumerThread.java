@@ -1,6 +1,7 @@
 package org.consumer;
 
-import org.connection.ReceiveThread;
+import org.OpenBotGUI;
+import org.connection.Client;
 
 /**
  * Created by zach on 9/11/2015.
@@ -11,17 +12,20 @@ import org.connection.ReceiveThread;
  */
 public class ConsumerThread extends Thread {
     // The receiveThread is where the inbound queue is, get data from here.
-    private ReceiveThread receiveThread;
+    private Client client;
     // boolean to keep the thread running
     private boolean shouldRun = true;
+    // The instance of the UI
+    private OpenBotGUI openBotGUI;
 
     /**
      * Default constructor
      *
-     * @param receiveThread the receive thread that is being used by the client
+     * @param client the instance of Client that is being used for communication
      */
-    public ConsumerThread(ReceiveThread receiveThread) {
-        this.receiveThread = receiveThread;
+    public ConsumerThread(Client client, OpenBotGUI openBotGUI) {
+        this.client = client;
+        this.openBotGUI = openBotGUI;
     }
 
     /**
@@ -33,11 +37,11 @@ public class ConsumerThread extends Thread {
      */
     @Override
     public void run() {
-        while (shouldRun) {
+        while (this.shouldRun) {
             // Check if there are any messages in the clients inbound queue
-            if (receiveThread.hasMessage()) {
+            if (this.client.hasMessage()) {
                 // Call processMessage() to handle the new message
-                processMessage();
+                this.processMessage();
             }
         }
         // If this prints out, the thread has been killed
@@ -50,20 +54,22 @@ public class ConsumerThread extends Thread {
      * them as appropriate.
      */
     private void processMessage() {
-        String message = receiveThread.getMessage();
-        if(message.contains(":")){
+        String message = client.getMessage();
+        if (message.contains(":")) {
             String[] splitMessage = message.split(":");
-            switch (splitMessage.length){
-                case 1:
-
-                    break;
-                case 2:
-
-                    break;
-                case 3:
+            switch (splitMessage.length) {
+                case 3: // the message has 3 components
                     // This means that we received the position of a motor
-                    if(splitMessage[0].equalsIgnoreCase("Pos")){
-                        System.out.println(message);
+                    if (splitMessage[0].equalsIgnoreCase("Pos")) { // Pos:motorNumber:currentPosition
+                        // try to parse the joint number from the message (the joint that this is the position of)
+                        int jointNumber = parseInt(splitMessage[1]);
+                        // try to parse the updated position value from the message
+                        int newPosition = parseInt(splitMessage[2]);
+                        // if we successfully parsed the joint number and position
+                        if (jointNumber != -1 && newPosition != -1) {
+                            // update the UI to reflect the newly received values
+                            this.openBotGUI.updateJointNumber(jointNumber, newPosition);
+                        }
                     }
                     break;
             }
@@ -78,5 +84,15 @@ public class ConsumerThread extends Thread {
      */
     public void kill() {
         this.shouldRun = false;
+    }
+
+    private int parseInt(String text) {
+        int parsedInt = -1;
+        try {
+            parsedInt = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            System.out.println("Could not convert to int: " + text);
+        }
+        return parsedInt;
     }
 }

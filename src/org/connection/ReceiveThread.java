@@ -52,7 +52,7 @@ public class ReceiveThread extends Thread {
     @Override
     public void run() {
         // Keep looping until shouldRun gets set to false
-        while (shouldRun) {
+        while (this.shouldRun) {
             try {
                 // Wait for some data
                 String string = this.bufferedReader.readLine();

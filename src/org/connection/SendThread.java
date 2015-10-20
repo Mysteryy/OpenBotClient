@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * to handle sending and receiving messages.
  */
 public class SendThread extends Thread {
+    // Track time since we last requested the positions of motors
+    long lastPositionRequest = 0;
     // Socket used to establish a connection with the server, passed in from the Client object
     private Socket socket;
     // The buffered writer is used to write data over the socket
@@ -26,8 +28,6 @@ public class SendThread extends Thread {
     private ConcurrentLinkedQueue<String> outboundQueue = new ConcurrentLinkedQueue<String>();
     // boolean to keep the thread running
     private boolean shouldRun = true;
-    // Track time since we last requested the positions of motors
-    long lastPositionRequest = 0;
 
     /**
      * Default constructor
@@ -56,21 +56,23 @@ public class SendThread extends Thread {
     public void run() {
         // Run until the thread is killed
         while (this.shouldRun) {
-            if(System.currentTimeMillis() - lastPositionRequest > 5000){
-                this.outboundQueue.add("Get:0");
-                this.outboundQueue.add("Get:1");
-                this.outboundQueue.add("Get:2");
-                this.outboundQueue.add("Get:3");
-                this.outboundQueue.add("Get:4");
-                this.outboundQueue.add("Get:5");
-                lastPositionRequest = System.currentTimeMillis();
+            // Check if we need to update the position of all of the joints of the arm for the UI
+            if (System.currentTimeMillis() - lastPositionRequest > 500) {
+                // If the allotted time has passed, send a request for each joint position
+                // so that the UI accurately reflects the position of each joint.
+                this.sendMessage("Get:0");
+                this.sendMessage("Get:1");
+                this.sendMessage("Get:2");
+                this.sendMessage("Get:3");
+                this.sendMessage("Get:4");
+                this.sendMessage("Get:5");
+                // Update lastPositionRequest so that we don't spam requests
+                this.lastPositionRequest = System.currentTimeMillis();
             }
             // Check the queue to see if there is anything that needs to be send
             String stringToSend = this.outboundQueue.poll();
             // If there is something to send
             if (stringToSend != null) {
-                // Print the message (for debugging)
-                System.out.println(stringToSend);
                 // Write the message over the socket
                 this.writeMessage(stringToSend);
             }
@@ -113,10 +115,11 @@ public class SendThread extends Thread {
         char[] charArray = message.toCharArray();
         try {
             // Send the char array over the socket
-            bufferedWriter.write(charArray);
+            this.bufferedWriter.write(charArray);
             // Write a new line after each message to signal the end of the message when reading on the server.
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+            this.bufferedWriter.newLine();
+            // and of course, flush the buffer
+            this.bufferedWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

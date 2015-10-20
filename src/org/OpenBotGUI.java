@@ -1,5 +1,8 @@
+package org;
+
 import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -7,26 +10,31 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.connection.Client;
 
 /**
  *
- * @author John
+ * @author John Maynard
+ *
  */
 public class OpenBotGUI extends Application {
-    private Client client = new Client();
+    private Client client = new Client(this);
+    private Label x = new Label("temp");
+    private Label y = new Label("temp");
+    private Label z = new Label("temp");
+    private Label rx = new Label("temp");
+    private Label ry = new Label("temp");
+    private Label rz = new Label("temp");
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -358,32 +366,26 @@ public class OpenBotGUI extends Application {
         grid.add(scenetitle3, 10, 0, 5, 1);
         
         String xValue = "360.0";
-        Label x = new Label("temp");
         grid.add(x, 11, 1);
         x.setText("X :  "+ xValue);
-        
+
         String yValue = "360.0";
-        Label y = new Label("temp");
         grid.add(y, 11, 2);
         y.setText("Y :  "+ yValue);        
 
         String zValue = "360.0";
-        Label z = new Label("temp");
         grid.add(z, 11, 3);
         z.setText("Z :  "+ zValue);
         
         String rxValue = "360.0";
-        Label rx = new Label("temp");
         grid.add(rx, 11, 4);
         rx.setText("RX :  "+ rxValue);
         
         String ryValue = "360.0";
-        Label ry = new Label("temp");
         grid.add(ry, 11, 5);
         ry.setText("RY :  "+ ryValue);
         
         String rzValue = "360.0";
-        Label rz = new Label("temp");
         grid.add(rz, 11, 6);
         rz.setText("RZ :  "+ rzValue);
         
@@ -415,11 +417,62 @@ public class OpenBotGUI extends Application {
         return parsedInt;
     }
 
+    public void updateJointNumber(int jointNumber, int newPosition){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (jointNumber){
+                    case 0:
+                        updateBasePosition(newPosition);
+                        break;
+                    case 1:
+                        updateShoulderPosition(newPosition);
+                        break;
+                    case 2:
+                        updateElbowPosition(newPosition);
+                        break;
+                    case 3:
+                        updateWristOnePosition(newPosition);
+                        break;
+                    case 4:
+                        updateWristTwoPosition(newPosition);
+                        break;
+                    case 5:
+                        updateWristThreePosition(newPosition);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void updateBasePosition(int newPosition){
+        this.x.setText(String.valueOf(newPosition));
+    }
+
+    private void updateShoulderPosition(int newPosition){
+        this.y.setText(String.valueOf(newPosition));
+    }
+
+    private void updateElbowPosition(int newPosition){
+        this.z.setText(String.valueOf(newPosition));
+    }
+
+    private void updateWristOnePosition(int newPosition){
+        this.rx.setText(String.valueOf(newPosition));
+    }
+
+    private void updateWristTwoPosition(int newPosition){
+        this.ry.setText(String.valueOf(newPosition));
+    }
+
+    private void updateWristThreePosition(int newPosition){
+        this.rz.setText(String.valueOf(newPosition));
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

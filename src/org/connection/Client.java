@@ -1,5 +1,6 @@
 package org.connection;
 
+import org.OpenBotGUI;
 import org.consumer.ConsumerThread;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class Client {
     /**
      * Default constructor
      */
-    public Client() {
+    public Client(OpenBotGUI openBotGUI) {
         try {
             // Attempt to establish a new socket
             this.socket = new Socket(ipAddress, port);
@@ -42,7 +43,7 @@ public class Client {
             // Create the new threads
             this.receiveThread = new ReceiveThread(socket);
             this.sendThread = new SendThread(socket);
-            this.consumerThread = new ConsumerThread(receiveThread);
+            this.consumerThread = new ConsumerThread(this, openBotGUI);
 
             // Start the new threads
             this.receiveThread.start();
@@ -74,6 +75,16 @@ public class Client {
     }
 
     /**
+     * Checks if there is a message in the inbound queue. This method will
+     * not remove the message from the queue if there is one.
+     *
+     * @return true if there is a message in the inbound queue, false if not.
+     */
+    public boolean hasMessage() {
+        return this.receiveThread.hasMessage();
+    }
+
+    /**
      * Gets a message from the inbound queue, if one exist.
      *
      * @return the message that has been in the inbound queue the longest.
@@ -93,27 +104,69 @@ public class Client {
         this.sendThread.sendMessage(message);
     }
 
-    public void moveBaseHorizontalTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the horizontal position of
+     * the base to the position specified. This method will take care of the
+     * formatting for the command so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms base horizontal position.
+     */
+    public void moveBaseHorizontalTo(int angle) {
         this.sendMessage("Move:0:" + angle);
     }
 
-    public void moveShoulderTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the shoulder to the position
+     * specified. This method will take care of the formatting for the command
+     * so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms shoulder joint.
+     */
+    public void moveShoulderTo(int angle) {
         this.sendMessage("Move:1:" + angle);
     }
 
-    public void moveElbowTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the elbow to the position
+     * specified. This method will take care of the formatting for the command
+     * so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms elbow joint.
+     */
+    public void moveElbowTo(int angle) {
         this.sendMessage("Move:2:" + angle);
     }
 
-    public void moveWristOneTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the first wrist joint to the position
+     * specified. This method will take care of the formatting for the command
+     * so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms first wrist joint.
+     */
+    public void moveWristOneTo(int angle) {
         this.sendMessage("Move:3:" + angle);
     }
 
-    public void moveWristTwoTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the second wrist joint to the position
+     * specified. This method will take care of the formatting for the command
+     * so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms second wrist joint.
+     */
+    public void moveWristTwoTo(int angle) {
         this.sendMessage("Move:4:" + angle);
     }
 
-    public void moveWristThreeTo(int angle){
+    /**
+     * Sends a command to the robotic arm to move the second wrist joint to the position
+     * specified. This method will take care of the formatting for the command
+     * so that it can be interpreted properly.
+     *
+     * @param angle the target angle of the robotic arms second wrist joint.
+     */
+    public void moveWristThreeTo(int angle) {
         this.sendMessage("Move:5:" + angle);
     }
 }
