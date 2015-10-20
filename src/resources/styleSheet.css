@@ -1,0 +1,62 @@
+.root{
+    -fx-font-size: 12pt;
+    -fx-font-family: "Verdana";
+    -fx-base: #404040;
+    -fx-background: #404040;
+}
+
+.accordion {
+    -fx-font-size: 10pt;
+    -fx-background-color: #404040;
+    -fx-padding: 15;
+}
+
+.text-area {
+    -fx-background-color: #404040;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: rgb(00, 191, 255);
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: rgb(00, 191, 255);
+}
+
+
+.text-area .scroll-pane .content{
+    -fx-background-color: rgb(00, 191, 255);
+}
+
+.text-input {
+    -fx-text-fill: white;
+}
+
+.tab-pane {
+    -fx-text-fill: white;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+
+.tab-pane .tab:selected
+{
+    -fx-background-color: rgb(00, 191, 255);
+}
+
+.table-view .row:selected{
+    -fx-background-color: #404040;
+}
+
+.dialog-pane {
+    -fx-background-color: #404040;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: white;
+}
