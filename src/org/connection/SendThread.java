@@ -69,7 +69,7 @@ public class SendThread extends Thread {
                 // Update lastPositionRequest so that we don't spam requests
                 this.lastPositionRequest = System.currentTimeMillis();
             }
-            // Check the queue to see if there is anything that needs to be send
+            // Check the queue to see if there is anything that needs to be sent
             String stringToSend = this.outboundQueue.poll();
             // If there is something to send
             if (stringToSend != null) {
