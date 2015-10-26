@@ -104,5 +104,6 @@ public class ReceiveThread extends Thread {
      */
     public void kill() {
         this.shouldRun = false;
+        this.interrupt();
     }
 }
