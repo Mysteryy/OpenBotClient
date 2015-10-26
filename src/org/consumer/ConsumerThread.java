@@ -21,7 +21,8 @@ public class ConsumerThread extends Thread {
     /**
      * Default constructor
      *
-     * @param client the instance of Client that is being used for communication
+     * @param client     the instance of Client that is being used for communication
+     * @param openBotGUI the instance of the GUI, used to update the GUI
      */
     public ConsumerThread(Client client, OpenBotGUI openBotGUI) {
         this.client = client;

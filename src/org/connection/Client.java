@@ -25,9 +25,9 @@ public class Client {
     //private final String ipAddress = "192.168.10.102";
     // Socket object to establish a connection
     private Socket socket;
-    // The receive thread is in charge or putting received data in to a inbound queue to be processed later
+    // The receive thread is in charge of putting received data in to a inbound queue to be processed later
     private ReceiveThread receiveThread;
-    // The send thread is in charge of putting messages in to an outbound queue to send
+    // The send thread is in charge of putting messages in to an outbound queue to send to the server
     private SendThread sendThread;
     // The consumer thread consumes received data
     private ConsumerThread consumerThread;
